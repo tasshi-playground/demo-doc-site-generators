@@ -1,0 +1,7 @@
+[book]
+authors = ["Masaharu TASHIRO"]
+language = "en"
+multilingual = false
+src = "src"
+title = "cli-tool Documentation"
+
