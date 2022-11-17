@@ -18,6 +18,23 @@ concurrency:
 
 jobs:
   # Build jobs
+  build-index:
+    runs-on: ubuntu-latest
+    name: Build index page
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./index
+          destination: ./_site
+      - name: Archive document
+        uses: actions/upload-artifact@v3
+        with:
+          name: index
+          path: ./_site
+          retention-days: 1
+
   build-mdbook:
     runs-on: ubuntu-latest
     name: Build mdbook
@@ -47,10 +64,15 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: [build-mdbook]
+    needs: [build-index, build-mdbook]
     steps:
       - name: Setup Pages
         uses: actions/configure-pages@v2
+      - name: Download index page
+        uses: actions/download-artifact@v3
+        with:
+          name: index
+          path: _site
       - name: Download mdbook output
         uses: actions/download-artifact@v3
         with:
