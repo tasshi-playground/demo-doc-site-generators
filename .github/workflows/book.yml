@@ -58,13 +58,31 @@ jobs:
           path: mdbook/book
           retention-days: 1
 
+  build-docusaurus:
+    runs-on: ubuntu-latest
+    name: Build docusaurus
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure docusaurus
+        working-directory: docusaurus
+        run: npm ci
+      - name: Build document
+        working-directory: docusaurus
+        run: npm run build
+      - name: Archive document
+        uses: actions/upload-artifact@v3
+        with:
+          name: docusaurus
+          path: docusaurus/build
+          retention-days: 1
+
   # Deployment job
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: [build-index, build-mdbook]
+    needs: [build-index, build-mdbook, build-docusaurus]
     steps:
       - name: Setup Pages
         uses: actions/configure-pages@v2
@@ -78,6 +96,11 @@ jobs:
         with:
           name: mdbook
           path: _site/mdbook
+      - name: Download docusaurus output
+        uses: actions/download-artifact@v3
+        with:
+          name: docusaurus
+          path: _site/docusaurus
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
       - name: Deploy to GitHub Pages
