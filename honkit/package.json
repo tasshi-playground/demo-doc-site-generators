@@ -1,0 +1,12 @@
+{
+  "name": "honkit",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "honkit build",
+    "start": "honkit serve"
+  },
+  "devDependencies": {
+    "honkit": "^4.0.4"
+  }
+}
