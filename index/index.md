@@ -2,3 +2,4 @@
 
 - [mdbook](./mdbook)
 - [docusaurus](./docusaurus)
+- [honkit](./honkit)

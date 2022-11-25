@@ -76,13 +76,31 @@ jobs:
           path: docusaurus/build
           retention-days: 1
 
+  build-honkit:
+    runs-on: ubuntu-latest
+    name: Build honkit
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure honkit
+        working-directory: honkit
+        run: npm ci
+      - name: Build document
+        working-directory: honkit
+        run: npm run build
+      - name: Archive document
+        uses: actions/upload-artifact@v3
+        with:
+          name: honkit
+          path: honkit/_book
+          retention-days: 1
+
   # Deployment job
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: [build-index, build-mdbook, build-docusaurus]
+    needs: [build-index, build-mdbook, build-docusaurus, build-honkit]
     steps:
       - name: Setup Pages
         uses: actions/configure-pages@v2
@@ -101,6 +119,11 @@ jobs:
         with:
           name: docusaurus
           path: _site/docusaurus
+      - name: Download honkit output
+        uses: actions/download-artifact@v3
+        with:
+          name: honkit
+          path: _site/honkit
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
       - name: Deploy to GitHub Pages
